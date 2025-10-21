@@ -180,6 +180,11 @@
                 @apply px-8 py-3 text-lg;
                 min-width: 160px;
             }
+            
+            /* 针对安卓设备的额外样式 */
+            .close-btn-android {
+                @apply top-2 right-2 w-10 h-10;
+            }
         }
     </style>
 </head>
@@ -221,14 +226,15 @@
         <!-- 视频模态框 -->
         <div id="videoModal" class="modal">
             <div class="modal-content">
-                <button id="closeModal" class="close-btn">
+                <button id="closeModal" class="close-btn close-btn-android">
                     <i class="fa fa-times text-xl"></i>
                 </button>
                 <div class="relative bg-gray-900 rounded-2xl overflow-hidden">
                     <div id="playButton" class="absolute inset-0 flex items-center justify-center cursor-pointer bg-black bg-opacity-50 z-10 transition-opacity duration-300 hover:bg-opacity-40">
                         <i class="fa fa-play-circle text-white text-6xl md:text-8xl opacity-90 hover:opacity-100 transition-opacity"></i>
                     </div>
-                    <video id="evidenceVideo" class="w-full h-auto" controls poster="https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/a96325db04f146b69c5341d0dbf5558c~tplv-a9rns2rl98-image.image?rcl=20251021140329C3EF8683F808E491C012&rk3s=8e244e95&rrcfp=f06b921b&x-expires=1763618625&x-signature=gMwGz6tMcG4CV347TDVM0N0FCTA%3D">
+                    <video id="evidenceVideo" class="w-full h-auto" controls>
+                        <!-- 修复视频源问题 -->
                         <source src="koubishi.mp4" type="video/mp4">
                         您的浏览器不支持HTML5视频。
                     </video>
@@ -326,13 +332,26 @@
         });
         
         // 添加关闭模态框按钮点击事件
-        document.getElementById('closeModal').addEventListener('click', () => {
+        const closeModalBtn = document.getElementById('closeModal');
+        closeModalBtn.addEventListener('click', closeModal);
+        
+        // 添加触摸事件处理（针对安卓设备）
+        closeModalBtn.addEventListener('touchend', function(e) {
+            e.preventDefault();
             closeModal();
         });
         
         // 点击模态框背景关闭功能
         modal.addEventListener('click', function(event) {
             // 检查点击的是否是模态框背景（而不是内容区域）
+            if (event.target === modal) {
+                closeModal();
+            }
+        });
+        
+        // 添加触摸事件处理（针对安卓设备）
+        modal.addEventListener('touchend', function(event) {
+            // 检查触摸的是否是模态框背景（而不是内容区域）
             if (event.target === modal) {
                 closeModal();
             }
@@ -400,6 +419,29 @@
         video.addEventListener('ended', () => {
             closeModal();
         });
+        
+        // 检测安卓设备并添加特定处理
+        function isAndroid() {
+            return /Android/i.test(navigator.userAgent);
+        }
+        
+        // 在安卓设备上添加额外的关闭按钮处理
+        if (isAndroid()) {
+            // 添加额外的关闭按钮触摸事件处理
+            const closeBtn = document.getElementById('closeModal');
+            closeBtn.addEventListener('touchstart', function(e) {
+                e.preventDefault();
+                closeModal();
+            });
+            
+            // 添加额外的模态框背景触摸处理
+            modal.addEventListener('touchstart', function(e) {
+                if (e.target === modal) {
+                    e.preventDefault();
+                    closeModal();
+                }
+            });
+        }
     </script>
 </body>
 </html>
