@@ -242,6 +242,7 @@
         const phrases = document.querySelectorAll('.phrase');
         const nextBtn = document.getElementById('nextBtn');
         const progressDots = document.querySelectorAll('.progress-dot');
+        const modal = document.getElementById('videoModal');
         
         // 当前显示的短语索引
         let currentIndex = 0;
@@ -286,7 +287,6 @@
         // 下一步按钮点击事件
         nextBtn.addEventListener('click', () => {
             if (nextBtn.innerHTML.includes('点击查看证据')) {
-                const modal = document.getElementById('videoModal');
                 modal.classList.add('active');
                 
                 const video = document.getElementById('evidenceVideo');
@@ -321,7 +321,19 @@
         
         // 添加关闭模态框按钮点击事件
         document.getElementById('closeModal').addEventListener('click', () => {
-            const modal = document.getElementById('videoModal');
+            closeModal();
+        });
+        
+        // 点击模态框背景关闭功能
+        modal.addEventListener('click', function(event) {
+            // 检查点击的是否是模态框背景（而不是内容区域）
+            if (event.target === modal) {
+                closeModal();
+            }
+        });
+        
+        // 关闭模态框的通用函数
+        function closeModal() {
             const video = document.getElementById('evidenceVideo');
             const playButton = document.getElementById('playButton');
             
@@ -333,7 +345,7 @@
             
             nextBtn.innerHTML = '再来一次 <i class="fa fa-refresh ml-2"></i>';
             nextBtn.disabled = false;
-        });
+        }
         
         // 重置游戏函数
         function resetGame() {
@@ -346,7 +358,7 @@
             updateProgressDots();
             updateButton();
             
-            document.getElementById('videoModal').classList.remove('active');
+            modal.classList.remove('active');
             
             const video = document.getElementById('evidenceVideo');
             video.pause();
@@ -363,7 +375,6 @@
                 nextBtn.click();
             }
             
-            const modal = document.getElementById('videoModal');
             if (modal.classList.contains('active')) {
                 const video = document.getElementById('evidenceVideo');
                 const playButton = document.getElementById('playButton');
@@ -381,14 +392,14 @@
                 }
                 
                 if (e.key === 'Escape') {
-                    document.getElementById('closeModal').click();
+                    closeModal();
                 }
             }
         });
         
         // 视频播放结束事件
         document.getElementById('evidenceVideo').addEventListener('ended', () => {
-            document.getElementById('closeModal').click();
+            closeModal();
         });
     </script>
 </body>
