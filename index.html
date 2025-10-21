@@ -243,6 +243,8 @@
         const nextBtn = document.getElementById('nextBtn');
         const progressDots = document.querySelectorAll('.progress-dot');
         const modal = document.getElementById('videoModal');
+        const video = document.getElementById('evidenceVideo');
+        const playButton = document.getElementById('playButton');
         
         // 当前显示的短语索引
         let currentIndex = 0;
@@ -289,12 +291,9 @@
             if (nextBtn.innerHTML.includes('点击查看证据')) {
                 modal.classList.add('active');
                 
-                const video = document.getElementById('evidenceVideo');
-                const playButton = document.getElementById('playButton');
-                
+                // 尝试自动播放视频
                 video.play().catch(error => {
                     console.log('自动播放被阻止，需要用户交互:', error);
-                    playButton.classList.remove('hidden');
                 });
                 
                 nextBtn.disabled = true;
@@ -311,12 +310,19 @@
         });
         
         // 添加视频播放按钮点击事件
-        document.getElementById('playButton').addEventListener('click', () => {
-            const video = document.getElementById('evidenceVideo');
-            const playButton = document.getElementById('playButton');
-            
+        playButton.addEventListener('click', () => {
             video.play();
             playButton.style.display = 'none';
+        });
+        
+        // 视频开始播放时隐藏播放按钮
+        video.addEventListener('play', function() {
+            playButton.style.display = 'none';
+        });
+        
+        // 视频暂停时显示播放按钮
+        video.addEventListener('pause', function() {
+            playButton.style.display = 'flex';
         });
         
         // 添加关闭模态框按钮点击事件
@@ -334,12 +340,9 @@
         
         // 关闭模态框的通用函数
         function closeModal() {
-            const video = document.getElementById('evidenceVideo');
-            const playButton = document.getElementById('playButton');
-            
-            modal.classList.remove('active');
             video.pause();
             playButton.style.display = 'flex';
+            modal.classList.remove('active');
             
             showPhrase(phrases.length - 1);
             
@@ -360,10 +363,9 @@
             
             modal.classList.remove('active');
             
-            const video = document.getElementById('evidenceVideo');
             video.pause();
             video.currentTime = 0;
-            document.getElementById('playButton').style.display = 'flex';
+            playButton.style.display = 'flex';
             
             nextBtn.disabled = false;
         }
@@ -376,9 +378,6 @@
             }
             
             if (modal.classList.contains('active')) {
-                const video = document.getElementById('evidenceVideo');
-                const playButton = document.getElementById('playButton');
-                
                 if (e.key === ' ') {
                     e.preventDefault();
                     
@@ -398,7 +397,7 @@
         });
         
         // 视频播放结束事件
-        document.getElementById('evidenceVideo').addEventListener('ended', () => {
+        video.addEventListener('ended', () => {
             closeModal();
         });
     </script>
