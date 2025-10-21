@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>特别的话</title>
+    <!-- Tailwind CSS v3 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#64748B',
+                        accent: '#F43F5E',
+                        dark: '#1F2937',
+                        light: '#F8FAFC'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.8s ease-in-out',
+                        'fade-out': 'fadeOut 0.5s ease-in-out',
+                        'bounce-subtle': 'bounceSubtle 2s infinite',
+                        'float': 'float 3s ease-in-out infinite'
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        },
+                        fadeOut: {
+                            '0%': { opacity: '1', transform: 'translateY(0)' },
+                            '100%': { opacity: '0', transform: 'translateY(-20px)' }
+                        },
+                        bounceSubtle: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-5px)' }
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-10px)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .text-shadow {
+                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            }
+            .text-glow {
+                text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+            }
+            .btn-hover {
+                @apply transition-all duration-300 hover:scale-105 hover:shadow-lg active:scale-95;
+            }
+            .text-appear {
+                @apply animate-fade-in;
+            }
+            .text-disappear {
+                @apply animate-fade-out;
+            }
+            .glass-effect {
+                @apply bg-white bg-opacity-20 backdrop-blur-md border border-white border-opacity-30;
+            }
+        }
+        
+        /* 背景图片设置 - 开始 */
+        :root {
+            --bg-image-url: url('xinxin.jpeg');
+        }
+        
+        body {
+            @apply min-h-screen flex flex-col items-center justify-center p-4 relative;
+            background-image: var(--bg-image-url);
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-attachment: fixed;
+        }
+        
+        /* 添加深色遮罩层提高文字可读性 */
+        body::before {
+            content: '';
+            @apply absolute inset-0 bg-black bg-opacity-40 z-0;
+        }
+        /* 背景图片设置 - 结束 */
+        
+        .container {
+            @apply relative z-10;
+        }
+        
+        .text-container {
+            @apply text-center min-h-[300px] flex items-center justify-center transition-all duration-500 mb-8;
+        }
+        
+        .phrase {
+            @apply text-3xl md:text-5xl lg:text-6xl font-bold text-white opacity-0 transition-all duration-700 transform translate-y-8 text-shadow;
+            line-height: 1.4;
+        }
+        
+        .phrase.active {
+            @apply opacity-100 transform translate-y-0;
+        }
+        
+        .phrase-card {
+            @apply glass-effect rounded-2xl p-8 md:p-12 shadow-2xl max-w-4xl mx-auto;
+        }
+        
+        .next-btn {
+            @apply px-10 py-4 bg-white text-dark rounded-full text-xl font-semibold shadow-xl btn-hover focus:outline-none focus:ring-4 focus:ring-white focus:ring-opacity-50 animate-bounce-subtle;
+            min-width: 180px;
+        }
+        
+        .next-btn:disabled {
+            @apply bg-gray-300 text-gray-500 cursor-not-allowed transform-none shadow-none animate-none;
+        }
+        
+        .final-message {
+            @apply mt-6 text-lg text-white font-medium text-glow;
+        }
+        
+        .progress-indicator {
+            @apply flex justify-center space-x-2 mb-8;
+        }
+        
+        .progress-dot {
+            @apply w-3 h-3 rounded-full bg-white bg-opacity-30 transition-all duration-300;
+        }
+        
+        .progress-dot.active {
+            @apply bg-white bg-opacity-90 scale-125;
+        }
+        
+        /* 模态框样式 */
+        .modal {
+            @apply fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-75 opacity-0 pointer-events-none transition-opacity duration-300;
+        }
+        
+        .modal.active {
+            @apply opacity-100 pointer-events-auto;
+        }
+        
+        .modal-content {
+            @apply relative bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden transform scale-95 transition-transform duration-300;
+        }
+        
+        .modal.active .modal-content {
+            @apply scale-100;
+        }
+        
+        .close-btn {
+            @apply absolute top-4 right-4 text-white bg-black bg-opacity-50 hover:bg-opacity-75 rounded-full w-12 h-12 flex items-center justify-center transition-all duration-300 z-10 btn-hover;
+        }
+        
+        .heart-float {
+            @apply absolute text-red-400 opacity-20 animate-float;
+            font-size: 2rem;
+        }
+        
+        @media (max-width: 768px) {
+            .phrase {
+                @apply text-2xl md:text-4xl;
+            }
+            
+            .phrase-card {
+                @apply p-6 m-4;
+            }
+            
+            .next-btn {
+                @apply px-8 py-3 text-lg;
+                min-width: 160px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 浮动爱心背景元素 -->
+    <div class="heart-float" style="top:10%; left:10%;"><i class="fa fa-heart"></i></div>
+    <div class="heart-float" style="top:20%; right:15%; animation-delay:0.5s;"><i class="fa fa-heart"></i></div>
+    <div class="heart-float" style="bottom:30%; left:15%; animation-delay:1s;"><i class="fa fa-heart"></i></div>
+    <div class="heart-float" style="bottom:20%; right:10%; animation-delay:1.5s;"><i class="fa fa-heart"></i></div>
+    
+    <div class="container mx-auto max-w-5xl">
+        <!-- 进度指示器 -->
+        <div class="progress-indicator">
+            <div class="progress-dot active" data-index="0"></div>
+            <div class="progress-dot" data-index="1"></div>
+            <div class="progress-dot" data-index="2"></div>
+            <div class="progress-dot" data-index="3"></div>
+            <div class="progress-dot" data-index="4"></div>
+            <div class="progress-dot" data-index="5"></div>
+        </div>
+        
+        <div class="phrase-card">
+            <div class="text-container">
+                <div id="phrase1" class="phrase active">你终于来了</div>
+                <div id="phrase2" class="phrase">我其实有一句话想跟你说</div>
+                <div id="phrase3" class="phrase">希望你看到后我们最少还能做好朋友</div>
+                <div id="phrase4" class="phrase">这句话就是</div>
+                <div id="phrase5" class="phrase text-red-300 font-extrabold">看此处者是猪</div>
+                <div id="phrase6" class="phrase text-red-300 font-extrabold">没错说的就是毛欣怡</div>
+            </div>
+        </div>
+        
+        <div class="text-center">
+            <button id="nextBtn" class="next-btn">
+                下一步 <i class="fa fa-arrow-right ml-2"></i>
+            </button>
+        </div>
+        
+        <!-- 视频模态框 -->
+        <div id="videoModal" class="modal">
+            <div class="modal-content">
+                <button id="closeModal" class="close-btn">
+                    <i class="fa fa-times text-xl"></i>
+                </button>
+                <div class="relative bg-gray-900 rounded-2xl overflow-hidden">
+                    <div id="playButton" class="absolute inset-0 flex items-center justify-center cursor-pointer bg-black bg-opacity-50 z-10 transition-opacity duration-300 hover:bg-opacity-40">
+                        <i class="fa fa-play-circle text-white text-6xl md:text-8xl opacity-90 hover:opacity-100 transition-opacity"></i>
+                    </div>
+                    <video id="evidenceVideo" class="w-full h-auto" controls poster="https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/a96325db04f146b69c5341d0dbf5558c~tplv-a9rns2rl98-image.image?rcl=20251021140329C3EF8683F808E491C012&rk3s=8e244e95&rrcfp=f06b921b&x-expires=1763618625&x-signature=gMwGz6tMcG4CV347TDVM0N0FCTA%3D">
+                        <source src="koubishi.mp4" type="video/mp4">
+                        您的浏览器不支持HTML5视频。
+                    </video>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 获取DOM元素
+        const phrases = document.querySelectorAll('.phrase');
+        const nextBtn = document.getElementById('nextBtn');
+        const progressDots = document.querySelectorAll('.progress-dot');
+        
+        // 当前显示的短语索引
+        let currentIndex = 0;
+        
+        // 更新进度指示器
+        function updateProgressDots() {
+            progressDots.forEach((dot, index) => {
+                if (index <= currentIndex) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
+        }
+        
+        // 显示指定索引的短语
+        function showPhrase(index) {
+            phrases.forEach((phrase, i) => {
+                if (i === index) {
+                    phrase.classList.add('active');
+                } else {
+                    phrase.classList.remove('active');
+                }
+            });
+        }
+        
+        // 更新按钮状态和文本
+        function updateButton() {
+            if (currentIndex === phrases.length - 1) {
+                nextBtn.innerHTML = '再来一次 <i class="fa fa-refresh ml-2"></i>';
+            } else if (currentIndex === phrases.length - 2) {
+                nextBtn.innerHTML = '点击查看证据 <i class="fa fa-video-camera ml-2"></i>';
+            } else {
+                nextBtn.innerHTML = '下一步 <i class="fa fa-arrow-right ml-2"></i>';
+            }
+        }
+        
+        // 初始化显示第一个短语
+        showPhrase(currentIndex);
+        updateProgressDots();
+        
+        // 下一步按钮点击事件
+        nextBtn.addEventListener('click', () => {
+            if (nextBtn.innerHTML.includes('点击查看证据')) {
+                const modal = document.getElementById('videoModal');
+                modal.classList.add('active');
+                
+                const video = document.getElementById('evidenceVideo');
+                const playButton = document.getElementById('playButton');
+                
+                video.play().catch(error => {
+                    console.log('自动播放被阻止，需要用户交互:', error);
+                    playButton.classList.remove('hidden');
+                });
+                
+                nextBtn.disabled = true;
+            } else if (nextBtn.innerHTML.includes('再来一次')) {
+                resetGame();
+            } else {
+                if (currentIndex < phrases.length - 1) {
+                    currentIndex++;
+                    showPhrase(currentIndex);
+                    updateProgressDots();
+                    updateButton();
+                }
+            }
+        });
+        
+        // 添加视频播放按钮点击事件
+        document.getElementById('playButton').addEventListener('click', () => {
+            const video = document.getElementById('evidenceVideo');
+            const playButton = document.getElementById('playButton');
+            
+            video.play();
+            playButton.style.display = 'none';
+        });
+        
+        // 添加关闭模态框按钮点击事件
+        document.getElementById('closeModal').addEventListener('click', () => {
+            const modal = document.getElementById('videoModal');
+            const video = document.getElementById('evidenceVideo');
+            const playButton = document.getElementById('playButton');
+            
+            modal.classList.remove('active');
+            video.pause();
+            playButton.style.display = 'flex';
+            
+            showPhrase(phrases.length - 1);
+            
+            nextBtn.innerHTML = '再来一次 <i class="fa fa-refresh ml-2"></i>';
+            nextBtn.disabled = false;
+        });
+        
+        // 重置游戏函数
+        function resetGame() {
+            phrases.forEach(phrase => {
+                phrase.classList.remove('active');
+            });
+            
+            currentIndex = 0;
+            showPhrase(currentIndex);
+            updateProgressDots();
+            updateButton();
+            
+            document.getElementById('videoModal').classList.remove('active');
+            
+            const video = document.getElementById('evidenceVideo');
+            video.pause();
+            video.currentTime = 0;
+            document.getElementById('playButton').style.display = 'flex';
+            
+            nextBtn.disabled = false;
+        }
+        
+        // 添加键盘事件支持
+        document.addEventListener('keydown', (e) => {
+            if ((e.key === ' ' || e.key === 'Enter') && !nextBtn.disabled) {
+                e.preventDefault();
+                nextBtn.click();
+            }
+            
+            const modal = document.getElementById('videoModal');
+            if (modal.classList.contains('active')) {
+                const video = document.getElementById('evidenceVideo');
+                const playButton = document.getElementById('playButton');
+                
+                if (e.key === ' ') {
+                    e.preventDefault();
+                    
+                    if (video.paused) {
+                        video.play();
+                        playButton.style.display = 'none';
+                    } else {
+                        video.pause();
+                        playButton.style.display = 'flex';
+                    }
+                }
+                
+                if (e.key === 'Escape') {
+                    document.getElementById('closeModal').click();
+                }
+            }
+        });
+        
+        // 视频播放结束事件
+        document.getElementById('evidenceVideo').addEventListener('ended', () => {
+            document.getElementById('closeModal').click();
+        });
+    </script>
+</body>
+</html>
