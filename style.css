@@ -1,0 +1,760 @@
+/* 全局样式 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* 头部样式 */
+.header {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 40px;
+    margin-bottom: 40px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    transition: transform 0.3s ease;
+}
+
+/* 移除悬停效果 */
+
+.profile-container {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+.avatar {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 5px solid #fff;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+}
+
+/* 移除悬停效果 */
+
+.profile-info {
+    flex: 1;
+    min-width: 300px;
+}
+
+.name {
+    font-size: 2.5rem;
+    color: #2c3e50;
+    margin-bottom: 10px;
+    position: relative;
+    display: inline-block;
+}
+
+.name::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -5px;
+    width: 60px;
+    height: 4px;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    border-radius: 2px;
+}
+
+.title {
+    font-size: 1.2rem;
+    color: #7f8c8d;
+    margin-bottom: 20px;
+}
+
+.stats {
+    display: flex;
+    gap: 40px;
+    flex-wrap: wrap;
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.stat-number {
+    display: block;
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #667eea;
+}
+
+.stat-label {
+    display: block;
+    color: #95a5a6;
+    font-size: 0.9rem;
+}
+
+/* 通用区块样式 */
+section {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 40px;
+    margin-bottom: 40px;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+/* 移除悬停效果 */
+
+.section-title {
+    font-size: 2rem;
+    color: #2c3e50;
+    margin-bottom: 20px;
+    position: relative;
+    padding-bottom: 10px;
+}
+
+.section-title::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 80px;
+    height: 3px;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    border-radius: 1.5px;
+}
+
+/* 关于区块样式 */
+.about-text {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #555;
+}
+
+/* 个人信息样式 */
+.about-info {
+    background-color: #f8f9fa;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    margin-top: 30px;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.info-row:last-child {
+    margin-bottom: 0;
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    flex: 1;
+    min-width: 200px;
+}
+
+.info-label {
+    font-weight: 600;
+    color: #667eea;
+    margin-right: 10px;
+    min-width: 80px;
+    display: inline-block;
+}
+
+.info-value {
+    color: #555;
+    font-size: 1.1rem;
+}
+
+/* 响应式个人信息 */
+@media (max-width: 768px) {
+    .info-row {
+        flex-direction: column;
+    }
+    
+    .info-item {
+        min-width: 100%;
+    }
+}
+
+/* 时间轴样式 - 优化排版设计 */
+.timeline {
+    padding: 80px 0 100px; /* 调整顶部内边距 */
+    background-color: #f9f9f9;
+    overflow-x: hidden;
+}
+
+.timeline-container {
+    position: relative;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+/* 可拖动时间轴外层容器 */
+.timeline-scroll-wrapper {
+    position: relative;
+    overflow-x: auto;
+    overflow-y: visible; /* 允许垂直溢出以显示完整内容 */
+    -webkit-overflow-scrolling: touch; /* 平滑滚动效果 */
+    scroll-snap-type: x proximity; /* 使用proximity模式更适合手机 */
+    scrollbar-width: thin;
+    scrollbar-color: #667eea #f1f1f1;
+    margin: 15px auto;
+    padding-bottom: 20px; /* 增加底部内边距避免内容被遮挡 */
+    min-width: 100%; /* 确保容器宽度足够 */
+    width: 100%;
+    touch-action: pan-x; /* 优化触摸行为 */
+    -webkit-tap-highlight-color: transparent; /* 移除点击高亮 */
+}
+
+/* 为每个时间点添加滚动吸附点 */
+.timeline-item {
+    scroll-snap-align: center;
+}
+
+/* 滚动条样式 */
+.timeline-scroll-wrapper::-webkit-scrollbar {
+    height: 8px;
+}
+
+.timeline-scroll-wrapper::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.timeline-scroll-wrapper::-webkit-scrollbar-thumb {
+    background: #667eea;
+    border-radius: 10px;
+    transition: background 0.3s ease;
+}
+
+/* 移除悬停效果 */
+
+/* 拖动提示 */
+.drag-hint {
+    text-align: center;
+    color: #999;
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+}
+
+/* 移除时间轴中心线样式 - 保持代码整洁 */
+
+/* 时间点容器 */
+.timeline-items {
+    display: flex;
+    position: relative;
+    padding: 80px 0 30px; /* 移除左右内边距，让内容完全展开 */
+    min-width: 4000px; /* 再次增加最小宽度确保所有时间点完整显示 */
+    gap: 80px; /* 最大化间距确保每个时间点都有足够空间 */
+    width: fit-content; /* 自适应内容宽度 */
+    margin: 0;
+    overflow-x: visible;
+}
+
+/* 时间轴项目 - 增加宽度 */
+.timeline-item {
+    position: relative;
+    width: 280px; /* 增加单个时间轴项目的宽度 */
+    flex-shrink: 0;
+    text-align: center;
+    transition: transform 0.3s ease;
+    white-space: nowrap; /* 确保内容不换行影响布局 */
+}
+
+/* 移除悬停效果 */
+
+/* 移除时间点样式 */
+
+/* 日期文本 - 优化宽度和显示 */
+.timeline-date {
+    position: absolute;
+    top: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-weight: 600;
+    color: #667eea;
+    font-size: 0.95rem;
+    white-space: normal;
+    text-align: center;
+    padding: 8px 10px;
+    background-color: white;
+    border-radius: 25px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+    z-index: 3;
+    transition: all 0.3s ease;
+    width: 180px; /* 增加日期文本宽度 */
+    line-height: 1.4;
+}
+
+/* 移除悬停效果 */
+
+/* 连接日期和内容的线 - 调整为适应无中心线设计 */
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    top: 60px;
+    left: 50%;
+    width: 1px;
+    height: 15px;
+    background-color: #667eea;
+    z-index: 0;
+    transition: all 0.3s ease;
+}
+
+/* 移除悬停效果 */
+
+/* 内容卡片 - 优化样式和对齐 */
+.timeline-content {
+    margin-top: 35px;
+    padding: 22px 20px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
+    border-left: none;
+    border-top: 3px solid #667eea;
+    transition: all 0.3s ease;
+    min-height: 110px;
+    z-index: 10;
+    position: relative;
+    overflow: hidden;
+}
+
+/* 移除悬停效果 */
+
+/* 内容卡片标题 */
+.timeline-content h3 {
+    font-size: 1.1rem;
+    margin: 0 0 8px;
+    color: #333;
+    transition: color 0.3s ease;
+}
+
+/* 内容卡片描述 */
+.timeline-content p {
+    font-size: 0.9rem;
+    color: #666;
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* 移除悬停效果 */
+
+/* 添加底部装饰元素 */
+.timeline-content::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 40px;
+    height: 40px;
+    background-color: rgba(102, 126, 234, 0.05);
+    border-radius: 10px 0 0 0;
+}
+
+/* 响应式优化 - 整合所有时间轴响应式样式 */
+@media (max-width: 768px) {
+    .timeline {
+        padding: 60px 0 80px;
+    }
+    
+    .timeline-items {
+        padding: 70px 15px 30px; /* 调整内边距，增加左右边距 */
+        gap: 40px; /* 减小手机竖屏模式下的间距，更适合触摸操作 */
+        min-width: calc(100% + 80px); /* 基于视窗宽度计算最小宽度 */
+        width: fit-content; /* 自适应内容宽度 */
+        margin: 0;
+        overflow-x: visible;
+        display: flex;
+        justify-content: flex-start;
+    }
+    
+    .timeline-item {
+        width: 140px; /* 稍微增加手机竖屏模式下的宽度 */
+        flex-shrink: 0;
+    }
+    
+    .timeline-date {
+        font-size: 0.72rem;
+        padding: 8px 10px;
+        white-space: normal;
+        line-height: 1.4;
+        width: 120px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        word-break: break-all;
+        text-align: center;
+        background-color: rgba(255, 255, 255, 0.95);
+        border-radius: 14px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        color: #5a67d8;
+        font-weight: 500;
+        margin: 0 auto;
+    }
+    
+    .timeline-content {
+        padding: 15px 12px;
+        margin-top: 30px;
+        min-height: 90px;
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    
+    .timeline-content h3 {
+        font-size: 0.85rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-bottom: 8px;
+        color: #333;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+    }
+    
+    .timeline-content p {
+        font-size: 0.78rem;
+        line-height: 1.4;
+        white-space: normal;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        max-width: 115px;
+        margin: 0 auto;
+        text-align: center;
+        word-break: break-word;
+        color: #666;
+        letter-spacing: -0.01em;
+    }
+    
+    .timeline-item::before {
+        height: 8px; /* 减小连接线高度 */
+        top: 55px;
+        background-color: #667eea;
+        width: 1.5px; /* 稍微加粗连接线 */
+    }
+    
+    /* 移除触摸交互效果 */
+    
+    /* 移除重复的时间轴相关响应式样式 */
+    .timeline-container::before,
+    .timeline-line {
+        display: none;
+    }
+    
+    /* 优化滚动条显示 */
+    .timeline-scroll-wrapper::-webkit-scrollbar {
+        height: 6px; /* 更细的滚动条 */
+    }
+    
+    .timeline-scroll-wrapper::-webkit-scrollbar-thumb {
+        background: #667eea;
+        border-radius: 3px; /* 更圆润的滚动条 */
+    }
+}
+
+/* 移除悬停效果 */
+
+.timeline-content h3 {
+    color: #333;
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.timeline-content p {
+    color: #666;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* 响应式时间轴样式已整合到上方统一的响应式区块中 */
+
+/* 内容亮点样式 */
+.highlights-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    margin-top: 30px;
+}
+
+.highlight-card {
+    background: #f8f9fa;
+    border-radius: 15px;
+    padding: 30px;
+    text-align: center;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.highlight-card.clickable {
+    cursor: pointer;
+}
+
+/* 移除悬停效果 */
+
+.card-overlay {
+    position: absolute;
+    bottom: -50px;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, rgba(102, 126, 234, 0.9), transparent);
+    color: white;
+    padding: 20px 10px 10px;
+    transition: all 0.3s ease;
+    font-weight: bold;
+    border-radius: 0 0 15px 15px;
+}
+
+/* 移除悬停效果 */
+
+/* 移除点击动画 */
+
+/* 弹窗样式 */
+.info-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    animation: fadeIn 0.3s ease;
+}
+
+.popup-content {
+    background: white;
+    border-radius: 20px;
+    padding: 40px;
+    max-width: 500px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: slideIn 0.3s ease;
+    position: relative;
+}
+
+.popup-content h3 {
+    color: #2c3e50;
+    margin-bottom: 20px;
+    font-size: 1.8rem;
+}
+
+.popup-content p {
+    color: #7f8c8d;
+    margin-bottom: 30px;
+    line-height: 1.6;
+}
+
+.close-popup {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 50px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+/* 移除悬停和点击效果 */
+
+/* 动画效果 */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-50px) scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.highlight-card i {
+    font-size: 2.5rem;
+    color: #667eea;
+    margin-bottom: 20px;
+}
+
+.highlight-card h3 {
+    font-size: 1.4rem;
+    color: #2c3e50;
+    margin-bottom: 10px;
+}
+
+.highlight-card p {
+    color: #7f8c8d;
+}
+
+/* 链接区块样式 */
+.links {
+    text-align: center;
+}
+
+.douyin-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 15px;
+    background: linear-gradient(135deg, #ff2c55, #ff0050);
+    color: white;
+    padding: 15px 30px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-size: 1.2rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 25px rgba(255, 44, 85, 0.3);
+    border: 2px solid transparent;
+}
+
+/* 移除悬停效果 */
+
+.douyin-link i {
+    font-size: 1.5rem;
+}
+
+/* 页脚样式 */
+.footer {
+    text-align: center;
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.1);
+}
+
+/* 移除鼠标跟随效果 */
+body {
+    cursor: default;
+}
+
+/* 确保在移动设备上不显示自定义光标 */
+@media (max-width: 768px) {
+    .cursor-fx {
+        display: none;
+    }
+    
+    body {
+        cursor: auto;
+    }
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .profile-container {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .stats {
+        justify-content: center;
+    }
+    
+    .name::after {
+        left: 50%;
+        transform: translateX(-50%);
+    }
+    
+    .section-title::after {
+        left: 50%;
+        transform: translateX(-50%);
+    }
+    
+    .header, section {
+        padding: 30px 20px;
+    }
+    
+    .name {
+        font-size: 2rem;
+    }
+    
+    .avatar {
+        width: 150px;
+        height: 150px;
+    }
+    
+    /* 响应式时间轴调整 - 移动设备上的横向滚动样式已在上方定义 */
+    .timeline-container::before,
+    .timeline-item::before {
+        display: none;
+    }
+    
+    .timeline-item {
+        padding-left: 0 !important;
+        margin-bottom: 0 !important;
+    }
+    
+    .timeline-date {
+        width: auto !important;
+        font-size: 0.8rem !important;
+    }
+    
+    .timeline-content {
+        padding: 15px;
+    }
+    
+    /* 响应式弹窗 */
+    .popup-content {
+        padding: 30px 20px;
+    }
+    
+    .popup-content h3 {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 15px;
+    }
+    
+    .stats {
+        gap: 20px;
+    }
+    
+    .stat-number {
+        font-size: 1.5rem;
+    }
+    
+    .section-title {
+        font-size: 1.8rem;
+    }
+}
