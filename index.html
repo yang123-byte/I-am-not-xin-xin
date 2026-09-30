@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#fff3e0">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="合成大奶娃">
+<meta name="description" content="纯前端小游戏：拖动瞄准、松手投放，相同的撞在一起合成更大的一只。">
+<!-- ↓ Monetag 站点验证：把后台给的 meta 标签粘在下面这一行 ↓ -->
+
+<title>合成毛欣怡</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<main class="app">
+
+  <!-- ===== 游戏区 ===== -->
+  <section class="stage" id="stage">
+    <canvas id="game" aria-label="合成毛欣怡游戏区域"></canvas>
+
+    <div class="overlay" id="overlay">
+      <div class="dialog" id="dialog">
+
+        <!-- 通关庆祝：合成出第 11 级时显示，平时 hidden -->
+        <div class="win-celebrate" id="winCelebrate" hidden>
+          <svg class="win-heart" viewBox="0 0 32 29" aria-hidden="true">
+            <defs>
+              <linearGradient id="heartGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#ff6f92"/>
+                <stop offset="1" stop-color="#d81b4a"/>
+              </linearGradient>
+            </defs>
+            <path fill="url(#heartGrad)"
+                  d="M16 29S0 18.6 0 9.3C0 4.2 4.1 0 9.2 0 12.2 0 14.8 1.5 16 3.8 17.2 1.5 19.8 0 22.8 0 27.9 0 32 4.2 32 9.3 32 18.6 16 29 16 29z"/>
+          </svg>
+          <img class="win-photo" id="winPhoto" alt="通关照片">
+          <p class="win-love">杨佳昊永远只爱毛欣怡</p>
+        </div>
+
+        <div class="dialog-emoji" id="overEmoji">🍉</div>
+        <h2 id="overTitle">游戏结束</h2>
+        <p class="dialog-score">本局得分 <strong id="finalScore">0</strong></p>
+        <p class="dialog-best">最高分 <span id="finalBest">0</span></p>
+
+        <div class="submit-box" id="submitBox">
+          <p class="submit-msg" id="submitMsg">正在结算…</p>
+          <p class="my-name">昵称：<strong id="myNameLabel">毛欣怡</strong>
+            <button class="link-btn" id="editNameBtn" type="button">改昵称</button>
+          </p>
+          <button class="btn" id="submitBtn" type="button" hidden>重试提交</button>
+        </div>
+
+        <div class="dialog-actions">
+          <button class="btn" id="boardBtn2" type="button">🏆 排行榜</button>
+          <button class="btn btn-primary" id="restartBtn" type="button">再来一局</button>
+        </div>
+        <p class="dialog-hint">按 R 键也可重新开始</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 侧边面板 ===== -->
+  <aside class="panel">
+
+    <header class="panel-head">
+      <h1>合成毛欣怡</h1>
+      <p class="subtitle">相同的撞在一起，越合越大，最后是神图</p>
+    </header>
+
+    <div class="stats">
+      <div class="stat">
+        <span class="stat-label">分数</span>
+        <strong class="stat-value" id="score">0</strong>
+      </div>
+      <div class="stat">
+        <span class="stat-label">最高分</span>
+        <strong class="stat-value stat-best" id="best">0</strong>
+      </div>
+    </div>
+
+    <div class="next-box">
+      <span class="box-label">下一个</span>
+      <canvas id="next" width="160" height="160" aria-label="下一个"></canvas>
+    </div>
+
+    <div class="chain-box">
+      <span class="box-label">合成表</span>
+      <canvas id="chain" width="680" height="112" aria-label="合成顺序"></canvas>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-wide" id="boardBtn" type="button">
+        <span class="ico">🏆</span><span class="lbl">排行榜</span>
+      </button>
+      <button class="btn btn-wide btn-help" id="helpBtn" type="button"
+              title="卡住了？点一下自动连锁合成（快捷键 H）">
+        <span class="ico">💡</span><span class="lbl">老公助你</span>
+      </button>
+      <button class="btn" id="soundBtn" type="button" aria-pressed="true">
+        <span class="ico">🔊</span><span class="lbl">音效开</span>
+      </button>
+      <button class="btn btn-primary" id="resetBtn" type="button" title="重新开始">
+        <span class="ico">↻</span><span class="lbl">重开</span>
+      </button>
+    </div>
+
+    <p class="tips">
+      鼠标：移动瞄准、点击投放；触屏：拖动瞄准、松手投放。<br>
+      ← → 微调位置，空格投放，R 重开。
+    </p>
+
+  </aside>
+
+</main>
+<!-- 碰撞形状数据（按贴图轮廓自动生成，由 tools/build_parts.py 产出） -->
+<script src="assets/fruits/parts.js"></script>
+<script src="game.js"></script>
+<!-- 排行榜 -->
+<script src="leaderboard.min.js"></script>
+<!-- 赞助作者 -->
+<script src="sponsor.js"></script>
+</body>
+</html>
