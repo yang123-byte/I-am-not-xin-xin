@@ -12,6 +12,15 @@
 <!-- ↓ Monetag 站点验证：把后台给的 meta 标签粘在下面这一行 ↓ -->
 
 <title>合成毛欣怡</title>
+
+<!-- 开局就可能掉下来的前 5 级贴图：在 HTML 里先预热，别等 game.js 跑起来才开始下载。
+     加起来才 50KB 左右，不支持的浏览器会自动忽略（type 不匹配就不会下），由 game.js 回退 PNG。 -->
+<link rel="preload" as="image" type="image/webp" href="assets/fruits/01-grape.webp">
+<link rel="preload" as="image" type="image/webp" href="assets/fruits/02-cherry.webp">
+<link rel="preload" as="image" type="image/webp" href="assets/fruits/03-orange.webp">
+<link rel="preload" as="image" type="image/webp" href="assets/fruits/04-lemon.webp">
+<link rel="preload" as="image" type="image/webp" href="assets/fruits/05-kiwi.webp">
+
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -96,9 +105,13 @@
       <button class="btn btn-wide" id="boardBtn" type="button">
         <span class="ico">🏆</span><span class="lbl">排行榜</span>
       </button>
+      <!-- 图标 = src/3.1.jpg 裁的圆形头像，由 tools/make_help_icon.py 产出 -->
       <button class="btn btn-wide btn-help" id="helpBtn" type="button"
               title="卡住了？点一下自动连锁合成（快捷键 H）">
-        <span class="ico">💡</span><span class="lbl">老公助你</span>
+        <picture class="ico">
+          <source srcset="assets/help-icon.webp" type="image/webp">
+          <img src="assets/help-icon.png" alt="" width="96" height="96">
+        </picture><span class="lbl">老公助你</span>
       </button>
       <button class="btn" id="soundBtn" type="button" aria-pressed="true">
         <span class="ico">🔊</span><span class="lbl">音效开</span>

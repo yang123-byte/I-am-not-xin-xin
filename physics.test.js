@@ -331,6 +331,8 @@ check('两只轮流不算在一起', S.over === false,
 
 /* ---- 8. 界面：棋盘右上角画的是不是「下一个」 ---- */
 console.log('[8] 下一个预览');
+/* 真正画到屏幕上的是 webp 那版；file（PNG）只是老浏览器的回退，正常情况下不会用到 */
+const spriteOf = (tier) => U.FRUITS[tier].webp || U.FRUITS[tier].file;
 freshGame();
 S.pending = 0;          // 当前这颗（准星位置画的就是它）
 S.next = 5;             // 下一个
@@ -339,8 +341,8 @@ drawnImages.length = 0;
 pump(1);
 const gameDraws = drawnImages.filter((d) => d.ctx === 'game');
 const lastDraw = gameDraws[gameDraws.length - 1];
-const expectNext = U.FRUITS[5].file;
-const expectPending = U.FRUITS[0].file;
+const expectNext = spriteOf(5);
+const expectPending = spriteOf(0);
 check('右上角预览 = 下一个（不是当前这颗）',
   !!lastDraw && lastDraw.src === expectNext,
   '画的是 ' + (lastDraw && lastDraw.src ? lastDraw.src.split('/').pop() : '(无)'));
@@ -356,7 +358,7 @@ drawnImages.length = 0;
 pump(1);
 const inCooldown = drawnImages.filter((d) => d.ctx === 'game');
 check('冷却期间准星仍然画着当前这颗',
-  inCooldown.some((d) => d.src === U.FRUITS[7].file),
+  inCooldown.some((d) => d.src === spriteOf(7)),
   '把 pending 设成 tier7，本帧绘制 ' + inCooldown.length + ' 张');
 
 /* 连续投放 120 次，「下一个」永远不等于当前 */
@@ -437,6 +439,44 @@ check('随后触发的判负不会覆盖通关', S.win === true && els.winCelebr
 kd({ code: 'KeyR', target: body, preventDefault() {} });
 check('重开后庆祝区收起、状态复位',
   els.winCelebrate.hidden === true && S.win === false && S.over === false);
+
+/* ---- 11. 贴图：路径写得对、文件真的在、加载的确实是 webp ---- */
+console.log('[11] 贴图');
+const missing = [];
+for (let i = 0; i < U.FRUITS.length; i++) {
+  const f = U.FRUITS[i];
+  if (!f.webp || !fs.existsSync(path.join(root, f.webp))) missing.push(f.webp || '(缺 webp 字段)');
+  if (!f.file || !fs.existsSync(path.join(root, f.file))) missing.push(f.file || '(缺 file 字段)');
+}
+check('每一级的 webp 和 PNG 回退文件都在磁盘上', missing.length === 0,
+  missing.length ? '找不到 ' + missing.join('、') : U.FRUITS.length + ' 级齐全');
+
+/* 桩件图片同步回调，boot 时 11 级应该已经全部落到 f.img 上，且用的是 webp 那版。
+   真要是路径写错了，这里 f.img 会是 undefined —— 屏幕上就是一颗纯色小球。 */
+const notLoaded = U.FRUITS.filter((f) => !f.img).map((f) => f.name);
+check('每一级都真的加载成功了（没有回落成程序化水果）', notLoaded.length === 0,
+  notLoaded.length ? '没加载出来：' + notLoaded.join('、') : '11 级全部就位');
+
+const wrongSrc = U.FRUITS.filter((f) => f.img && f.img.__src !== f.webp)
+                         .map((f) => f.name);
+check('加载的是 webp 而不是 PNG（回退不该被触发）', wrongSrc.length === 0,
+  wrongSrc.length ? '走了回退：' + wrongSrc.join('、') : '全部走 webp');
+
+/* ---- 12. index.html 里引用的本地文件是不是都在 ---- */
+console.log('[12] 静态资源引用');
+/* 少一张图页面不会报错，只会静静地空一块（头像裂图、贴图退回纯色球），
+   所以这里把 src / href / srcset 里的本地路径都捞出来对一遍 */
+const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
+const refs = new Set();
+for (const m of html.matchAll(/(?:src|href|srcset)="([^"]+)"/g)) {
+  for (const part of m[1].split(',')) {                    // srcset 可能是「url 1x, url 2x」
+    const url = part.trim().split(/\s+/)[0];
+    if (url && !/^(?:[a-z]+:|\/\/|#)/i.test(url)) refs.add(url);
+  }
+}
+const dead = [...refs].filter((u) => !fs.existsSync(path.join(root, u)));
+check('index.html 引用的本地文件都存在', dead.length === 0,
+  dead.length ? '找不到 ' + dead.join('、') : refs.size + ' 个引用全部命中');
 
 console.log(pass ? '\n物理手感自检通过' : '\n物理手感自检未通过');
 process.exit(pass ? 0 : 1);

@@ -1,11 +1,11 @@
-# 合成大奶娃
+# 合成毛欣怡
 
 纯 **HTML + CSS + JavaScript** 的静态网页小游戏，零依赖、零构建、离线可玩。
 物理引擎（PBD 位置约束求解）是自己写的，没有引入 matter.js 等任何第三方库。
 
 ## 🎮 在线玩
 
-**<https://yhsome.github.io/BigNaiWa/>**
+**<https://maoxinyi.top>**
 
 （GitHub Pages 托管，手机浏览器打开就能玩，也可以「添加到主屏幕」当 App 用。）
 
@@ -147,7 +147,9 @@ python -m http.server 8080
 | `game.js` | 游戏逻辑 + 自研物理 + Canvas 渲染 + WebAudio 音效 |
 | `leaderboard.min.js` | 在线排行榜的构建产物（TinyWebDB 接口 + 弹窗渲染），页面直接引用它 |
 | `sponsor.js` | 结算页「赞助作者」弹窗（展示微信收款码），纯静态、无网络请求 |
-| `assets/fruits/` | 11 张统一后的圆形贴图（512×512 PNG，透明底）+ `parts.js` 碰撞形状 |
+| `assets/fruits/` | 11 张统一后的圆形贴图：`NN-*.webp`（**实际加载**，按级缩图）+ `NN-*.png`（512×512 原始图，回退用）+ `parts.js` 碰撞形状 |
+| `tools/make_webp.py` | 把 PNG 转成 WebP 并按「这级最大能画多大」缩图（3.2MB → 0.27MB），**换完贴图必跑** |
+| `tools/make_help_icon.py` | 把 `src/3.1.jpg` 裁成「老公助你」按钮上的圆形小头像（`assets/help-icon.*`） |
 | `tools/photo_assets.py` | **当前用的**素材脚本：按取景框裁成圆形照片、烤暗边，并产出单圆的 `parts.js` |
 | `tools/normalize_assets.py` | 备选脚本：白底商品图自动抠底（保留不规则轮廓），当前版本的素材没走这条路 |
 | `tools/build_parts.py` | 配合 `normalize_assets.py` 用：按**不规则轮廓**生成碰撞形状。圆形贴图别跑这个，见下文 |
@@ -232,6 +234,7 @@ CROPS = {
 ```bash
 python tools/photo_assets.py             # 出贴图 + parts.js
 python tools/photo_assets.py --preview   # 另外出一张取景框预览和一张成品预览
+python tools/make_webp.py                # 缩图 + 转 WebP（上线前必跑，见下一节）
 ```
 
 每张会裁成正方形 → 套抗锯齿圆形蒙版（四角透明、边缘羽化）→ 缩到 512 画布居中 →
@@ -245,11 +248,55 @@ python tools/photo_assets.py --preview   # 另外出一张取景框预览和一�
 > （从四边区域生长 + 饱和度闸门）。实拍照片背景太杂 —— 餐厅、一桌菜、商场镜子自拍这些，
 > 抠出来全是碎渣。所以这批素材不抠底，改成整张裁圆。
 
-**贴图规格**：512×512 正方形、PNG-32 透明底、主体（圆）占长边 92%。
-棋盘、右上角「下一个」预览、合成表、粒子**全部复用同一张**，不做多倍图。
+**贴图规格**：PNG 原图 512×512、透明底、主体（圆）占长边 92%；实际下发的是
+`make_webp.py` 缩过图的 WebP（见下一节）。棋盘、右上角「下一个」预览、合成表、粒子
+**全部复用同一张**，不做多倍图。
+
+### 贴图体积：为什么要跑 `make_webp.py`
+
+直接扔 11 张 512×512 PNG 上去是 **3.2MB**，GitHub Pages 是静态托管、传输阶段压不动
+（PNG 本身已经压过了），手机上开局要看好几秒的纯色小球。两道优化一起上：
+
+1. **换 WebP**：同样的画面，体积直接砍到 1/6 左右。
+2. **按级缩图**：棋盘逻辑宽度 420、`dpr` 封顶 2，画到屏幕上最大就是 2 倍。
+   第 i 级的直径是 `2*r` 逻辑像素，再按 `ASSET_FILL` 除以 0.92 换算成贴图边长，
+   所以这级真正需要的像素 = `4*r/0.92` —— 葡萄（r=17）只要 74px，
+   塞一张 512 的图纯属浪费。`make_webp.py` 顶部的 `TIER_SIZES` 就是按这个公式定的。
+
+```bash
+python tools/make_webp.py                # 默认 quality=88，按 TIER_SIZES 缩图
+python tools/make_webp.py --quality 92   # 嫌糊就调高
+python tools/make_webp.py --keep-size    # 只转格式、不缩图
+```
+
+| 级别 | 1 葡萄 | 6 番茄 | 9 椰子 | 11 大西瓜 | 合计 |
+| --- | --- | --- | --- | --- | --- |
+| PNG | 238K | 264K | 371K | 280K | 3.10 MB |
+| WebP | 4.5K | 15K | 48K | 35K | **0.27 MB** |
+
+> PNG 原图**不要删**：`parts.js` 的碰撞形状是 `photo_assets.py` 从 512 原图算的，
+> 而且它是老浏览器不支持 WebP 时的回退。`TIER_SIZES` 改了要重跑本脚本。
+
+### 「老公助你」按钮的头像
+
+侧边栏那颗圆形头像不是贴图，是 DOM 里的一个 `<img>`，来源 `src/3.1.jpg`：
+
+```bash
+python tools/make_help_icon.py --preview    # 先出放大对比图看取景框
+python tools/make_help_icon.py              # 定了就写 assets/help-icon.{webp,png}
+```
+
+原图是张半张脸埋在衣领里的自拍，整张裁圆的话头在画面里只占中间一小条，缩到 20px
+就糊成一团，所以 `CROP` 框到了眉眼那一带（默认圆心 `(0.50, 0.41)`、边长 `0.60`）。
+出图 96×96（手机端最大约 22px × dpr 3），和水果贴图一样同时给 webp + PNG 回退，
+HTML 里用 `<picture>` 挂——不支持的浏览器直接取 PNG，不需要 JS。
+
+> 描边**没有**像水果那样烤进图里，而是交给 CSS 的 `box-shadow`：图会被缩到 20px 上下，
+> 烤进去的边会跟着糊掉，CSS 的描边在任意 dpr 下都是干净的 1 物理像素。
+> 尺寸写成 `em`，手机端 `.btn` 字号提到 17px 时图标自己跟着变大，不用另写媒体查询。
 
 **缺图不影响游玩**：任何一张加载失败都会自动回退成程序化绘制的圆形水果（`FRUITS[i].c1/c2`），
-控制台会打一条 warn。
+控制台会打一条 warn。回退是三级漏斗：`.webp` 挂了试 `.png`，`.png` 也挂了才画程序化水果。
 
 ## 碰撞形状
 
@@ -352,7 +399,10 @@ python tools/build_parts.py --max-parts 16 --preview   # 再按轮廓生成碰�
   保证**视觉大小 = 物理直径**，四边不会露馅），没贴图就画程序化水果。
   贴图跟着 `b.angle` 一起旋转，和物理滚动一致；撞击时的挤压变形同样作用于贴图。
   合成时有粒子爆裂、飘分文字与新品弹出动画。
-- **素材加载**：等 `img.decode()` 完成才交给 `drawImage`，避免画出没解码完的半成品。
+- **素材加载**：分两批。先拉开局就会出现的**前 5 级**（`SPAWN_TIERS`，加起来才 50KB 出头），
+  到位了再拉后面 6 级的大图；`index.html` 里还对前 5 级下了 `<link rel="preload">`，
+  让下载在 `game.js` 解析之前就开始 —— 首屏因此几乎立刻有图，不用盯着纯色小球。
+  另外等 `img.decode()` 完成才交给 `drawImage`，避免画出没解码完的半成品。
 - **音效**：WebAudio 振荡器实时合成，无音频文件；可一键静音并记忆设置。
 - **存档**：最高分与静音状态存 `localStorage`。
 - **调试**：控制台可用 `__SUIKA__.state`、`__SUIKA__.reset()`、`__SUIKA__.drop()`、
@@ -370,11 +420,15 @@ node physics.test.js
 触屏「拖动瞄准 / 松手投放」与鼠标「按下即投」两套输入、
 **结束后空格/回车不再重开而 R 可以、输入框里不抢按键**、
 **「帮我一把」只合够得着的同级球（够不着的、不同级的都不动）**、
-**合出第 11 级即通关、庆祝区弹出、通关后按钮和 H 都不再生效、R 重开能收起庆祝区**。
+**合出第 11 级即通关、庆祝区弹出、通关后按钮和 H 都不再生效、R 重开能收起庆祝区**、
+**11 级贴图的 webp / PNG 都在磁盘上、都加载成功、走的确实是 webp 那条路**、
+**`index.html` 里 src / href / srcset 引用的本地文件一个不少**
+（路径写错 → 屏幕上就是一颗纯色小球或一个裂图，这几条专门拦它）。
 
 ```bash
 python tools/build_parts.py --max-parts 16 --preview   # 换了贴图后重新生成碰撞形状
-node physics.test.js                                   # 物理自检
+python tools/make_webp.py                              # 缩图 + 转 WebP（别漏，不然白等 3MB）
+node physics.test.js                                   # 物理自检（会校验 webp/PNG 都在、都加载得进来）
 ```
 
 ## 手机端适配
@@ -417,6 +471,8 @@ node physics.test.js                                   # 物理自检
 | `SPAWN_WEIGHTS` | `[.28 .24 .20 .16 .12]` | 前 5 级的掉落权重；开了 `AVOID_REPEAT` 后实测摊平为 25.6/23.2/20.6/17.2/13.4% |
 | `ASSET_FILL` | `0.92` | 贴图主体占画布比例，**必须与生成脚本的 `FILL` 一致** |
 | `FRUITS` | 11 项 | 每级的半径 / 贴图路径 / 兜底配色，改这里即可换皮 |
+| `FRUITS[i].webp` | 11 项 | 实际加载的贴图，由 `tools/make_webp.py` 产出 |
+| `FRUITS[i].file` | 11 项 | PNG 原图，不支持 WebP 时回退用 |
 | `FRUITS[i].c1/c2` | 11 组 | 贴图缺失时的程序化水果配色 |
 | `FRUITS[i].pc1/pc2` | 11 组 | 粒子/汁水颜色（取自贴图主体平均色） |
 

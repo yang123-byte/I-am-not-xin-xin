@@ -457,6 +457,25 @@ body {
   background: linear-gradient(135deg, #fffaea, #ffe8b0);
 }
 
+/* 「老公助你」的图标 = src/3.1.jpg 裁的圆形头像（tools/make_help_icon.py 产出）。
+   按钮改成 flex 居中，省得靠 vertical-align 猜基线的偏移；
+   描边用 box-shadow 而不是烤进图里 —— 图会被缩到 20px 上下，烤进去的边会跟着糊掉，
+   CSS 的描边在任意 dpr 下都是干净的 1 物理像素。
+   尺寸用 em：手机端 .btn 的字号提到 17px，图标跟着一起变大，不用另写一条媒体查询。 */
+#helpBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#helpBtn .ico img {
+  display: block;
+  width: 1.25em;      /* 和旁边 🏆 🔊 那几个 emoji 的字形高度对齐，一排按钮才齐整 */
+  height: 1.25em;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px rgba(150, 100, 40, .28);
+}
+
 /* ---------------- 结束弹窗里的结算区 ---------------- */
 
 .submit-box {
@@ -911,9 +930,12 @@ body {
 
 /* 顶部信息条在横屏下是竖排的，恢复成图标 + 文字 */
 @media (max-width: 860px) and (orientation: landscape) {
-  #boardBtn, #soundBtn { min-width: 0; padding: 0 10px; font-size: 13px; }
-  #boardBtn .lbl, #soundBtn .lbl { display: inline; }
-  #boardBtn .ico, #soundBtn .ico { margin-right: 4px; }
+  /* 横屏下面板是一竖列，横向空间够，标签都放出来。
+     #helpBtn 也得带上 —— 它就一个头像，不给标签没人知道是干嘛的
+     （原来是一颗 💡，勉强还能猜） */
+  #boardBtn, #helpBtn, #soundBtn { min-width: 0; padding: 0 10px; font-size: 13px; }
+  #boardBtn .lbl, #helpBtn .lbl, #soundBtn .lbl { display: inline; }
+  #boardBtn .ico, #helpBtn .ico, #soundBtn .ico { margin-right: 4px; }
 }
 
 /* 很矮的横屏（手机横过来且高度不足 430px）：进一步压缩 */
